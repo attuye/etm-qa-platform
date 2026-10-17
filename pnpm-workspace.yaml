@@ -1,0 +1,7 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "suites/*"
+
+# Each folder inside these three becomes its own package that others can import,
+# like a mini npm package inside the repo.
