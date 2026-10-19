@@ -1,18 +1,22 @@
 {
   "name": "etm-qa-platform",
   "private": true,
-  "packageManager": "pnpm@12.14.0+sha512.c18ba6d87993d3d164cb5e8948f32b2c06ee854487e06cd8d86781342fb3e5bb4634367034711e86802baa9c37bea906ce1929ad08d70884c97d801df13389a6",
   "engines": {
     "node": ">=22"
   },
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "suites/*"
+  ],
   "scripts": {
-    "build": "pnpm -r build",
-    "typecheck": "pnpm -r typecheck",
-    "test:api": "pnpm -r --filter \"./suites/**\" test:api",
-    "test:e2e": "pnpm -r --filter \"./suites/**\" test:e2e"
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test:api": "npm run test:api -w suites --if-present",
+    "test:e2e": "npm run test:e2e -w suites --if-present"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
-    "typescript": "^7.0.2"
+    "typescript": "^6.0.3"
   }
 }
