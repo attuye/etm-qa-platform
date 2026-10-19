@@ -7,13 +7,16 @@ import { RolesGuard } from '../auth/roles.guard';
 import { PublicUser, toPublicUser } from './public-user';
 import { Role } from './role.enum';
 import { UsersService } from './users.service';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
+@ApiBearerAuth()
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('me')
+  @ApiBearerAuth()
   async me(@CurrentUser() current: JwtPayload): Promise<PublicUser> {
     const user = await this.usersService.findById(current.sub);
     if (!user) {

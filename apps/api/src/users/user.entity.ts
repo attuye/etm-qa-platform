@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from './role.enum';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 @Entity('users')
 export class User {
@@ -9,6 +10,7 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
+  @ApiHideProperty()
   @Column({ name: 'password_hash' })
   passwordHash!: string;
 

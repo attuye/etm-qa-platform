@@ -1,6 +1,8 @@
 import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Health')
 @Controller('health')
 export class HealthController {
   constructor(private readonly dataSource: DataSource) {}

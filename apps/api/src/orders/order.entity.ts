@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { OrderStatus } from './order-status.enum';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 @Entity('orders')
 @Index(['customerId', 'idempotencyKey'], { unique: true })
@@ -17,6 +18,7 @@ export class Order {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @ApiHideProperty()
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'customer_id' })
   customer?: User;
