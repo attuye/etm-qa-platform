@@ -16,6 +16,10 @@ export class UsersService {
     return this.users.findOne({ where: { id } });
   }
 
+    findAll(): Promise<User[]> {
+    return this.users.find({ order: { createdAt: 'ASC' } });
+  }
+
   create(email: string, passwordHash: string, role: Role = Role.Customer): Promise<User> {
     const user = this.users.create({ email, passwordHash, role });
     return this.users.save(user);

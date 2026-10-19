@@ -5,8 +5,7 @@ import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-
-export type PublicUser = Pick<User, 'id' | 'email' | 'role' | 'createdAt'>;
+import { PublicUser, toPublicUser } from '../users/public-user';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +24,7 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const user = await this.usersService.create(email, passwordHash);
-    return this.toPublicUser(user);
+    return toPublicUser(user);
   }
 
   async login(dto: LoginDto): Promise<{ accessToken: string }> {
@@ -41,7 +40,4 @@ export class AuthService {
     return { accessToken };
   }
 
-  private toPublicUser(user: User): PublicUser {
-    return { id: user.id, email: user.email, role: user.role, createdAt: user.createdAt };
-  }
 }
