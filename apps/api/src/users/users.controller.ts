@@ -17,6 +17,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiBearerAuth()
+  @Get('me')
   async me(@CurrentUser() current: JwtPayload): Promise<PublicUser> {
     const user = await this.usersService.findById(current.sub);
     if (!user) {
