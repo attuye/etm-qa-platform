@@ -22,13 +22,23 @@ describe('POST /auth/register', () => {
     await expect(api.auth.register(credentials)).rejects.toHaveStatus(409);
   });
 
-  it('treats emails as case-insensitive and ignores surrounding spaces', async () => {
+  it('treats emails as case-insensitive', async () => {
     const credentials = userData.credentials();
     await api.auth.register(credentials);
 
-    const variant = { ...credentials, email: `  ${credentials.email.toUpperCase()}  ` };
+    const variant = { ...credentials, email: credentials.email.toUpperCase() };
 
     await expect(api.auth.register(variant)).rejects.toHaveStatus(409);
+  });
+
+  it('rejects an email with surrounding spaces', async () => {
+    const credentials = userData.credentials();
+
+    const res = await api.raw('post', '/auth/register', {
+      body: { ...credentials, email: `  ${credentials.email}  ` },
+    });
+
+    expect(res).toHaveStatus(400);
   });
 
   it('stores the email in lower case', async () => {
