@@ -29,6 +29,25 @@ export interface TypedResponse<T> {
   data: T;
 }
 
+function describeNetworkError(error: unknown): string {
+  if (!(error instanceof Error)) {
+    return String(error);
+  }
+
+  const code = (error as NodeJS.ErrnoException).code;
+
+  if (error instanceof AggregateError && error.errors.length > 0) {
+    const inner = error.errors.map((e: unknown) => describeNetworkError(e)).join('; ');
+    return code ? `${code} (${inner})` : inner;
+  }
+
+  if (error.message) {
+    return code && !error.message.includes(code) ? `${code}: ${error.message}` : error.message;
+  }
+
+  return code ?? error.name;
+}
+
 export class HttpClient {
   constructor(
     private readonly baseUrl: string,
@@ -53,7 +72,7 @@ export class HttpClient {
     try {
       res = await req;
     } catch (error) {
-      const reason = error instanceof Error ? error.message : String(error);
+            const reason = describeNetworkError(error);
       throw new Error(`${method.toUpperCase()} ${url} failed before a response: ${reason}. Is the API running?`, {
         cause: error,
       });
