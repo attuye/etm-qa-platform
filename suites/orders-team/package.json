@@ -1,0 +1,19 @@
+{
+  "name": "@etm/orders-team",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test:api": "jest",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@etm/qa-api-client": "^0.1.0",
+    "@etm/qa-config": "^0.1.0",
+    "@etm/qa-data": "^0.1.0",
+    "@jest/globals": "^30.5.2",
+    "@swc/core": "^1.16.20",
+    "@swc/jest": "^0.2.39",
+    "expect": "^30.5.2",
+    "jest": "^30.5.2"
+  }
+}
