@@ -1,0 +1,25 @@
+{
+  "name": "@etm/qa-playwright",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1"
+  },
+  "dependencies": {
+    "@etm/qa-api-client": "^0.1.0",
+    "@etm/qa-config": "^0.1.0",
+    "@etm/qa-data": "^0.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  }
+}
