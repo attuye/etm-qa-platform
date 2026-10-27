@@ -49,15 +49,24 @@ describe('Order ownership', () => {
     await expect(alice.orders.get(randomUUID())).rejects.toHaveStatus(404);
   });
 
-  it('returns 404, not 403, for another customer\'s order', async () => {
+    it('returns 404, not 403, for another customer\'s order', async () => {
     const alice = await createCustomer(api);
     const bob = await createCustomer(api);
     const { order } = await alice.orders.create(orderData.valid());
 
-    const fromBob = bob.orders.get(order.id);
-    const missing = bob.orders.get(randomUUID());
-
-    await expect(fromBob).rejects.toHaveStatus(404);
-    await expect(missing).rejects.toHaveStatus(404);
+    await expect(bob.orders.get(order.id)).rejects.toHaveStatus(404);
+    await expect(bob.orders.get(randomUUID())).rejects.toHaveStatus(404);
   });
+
+  // it('returns 404, not 403, for another customer\'s order', async () => {
+  //   const alice = await createCustomer(api);
+  //   const bob = await createCustomer(api);
+  //   const { order } = await alice.orders.create(orderData.valid());
+
+  //   const fromBob = bob.orders.get(order.id);
+  //   const missing = bob.orders.get(randomUUID());
+
+  //   await expect(fromBob).rejects.toHaveStatus(404);
+  //   await expect(missing).rejects.toHaveStatus(404);
+  // });
 });
