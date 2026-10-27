@@ -2,6 +2,7 @@ import { expect, test as base, type BrowserContext, type Page } from '@playwrigh
 import { createApiClient, type ApiClient, type Session } from '@etm/qa-api-client';
 import { loadConfig } from '@etm/qa-config';
 import { createCustomer, seedData } from '@etm/qa-data';
+import { expectAccessible, type A11yOptions } from './accessibility';
 
 export interface QaTestFixtures {
     customer: Session;
@@ -9,6 +10,7 @@ export interface QaTestFixtures {
     openAs: (session: Session) => Promise<Page>;
     pageErrorLog: string[];
     failOnPageErrors: void;
+    checkAccessibility: (page: Page, options?: A11yOptions) => Promise<void>;
 }
 
 export interface QaWorkerFixtures {
@@ -50,6 +52,10 @@ export const test = base.extend<QaTestFixtures, QaWorkerFixtures>({
 
     admin: async ({ api }, use) => {
         await use(api.asAdmin());
+    },
+
+    checkAccessibility: async ({ }, use, testInfo) => {
+        await use((page, options) => expectAccessible(page, testInfo, options));
     },
 
     pageErrorLog: async ({ }, use) => {

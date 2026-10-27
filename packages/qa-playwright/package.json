@@ -15,6 +15,7 @@
     "@playwright/test": "^1"
   },
   "dependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@etm/qa-api-client": "^0.1.0",
     "@etm/qa-config": "^0.1.0",
     "@etm/qa-data": "^0.1.0"
