@@ -155,4 +155,31 @@ test.describe('Managing orders as admin', () => {
 
     await expect(second.error).toHaveText('Cannot change status from cancelled to confirmed');
   });
+
+    test('resets the form when placing another order', async ({ openAs, customer }) => {
+    const page = await openAs(customer);
+    console.log('Customer email:', customer.email);
+    console.log('Customer password:', customer.credentials.password);
+    const form = new NewOrderPage(page);
+    const firstProduct = uniqueProduct('Desk lamp');
+    const secondProduct = uniqueProduct('Office chair');
+
+    await form.goto();
+    await form.fill({ product: firstProduct, quantity: 2, unitPrice: '19.99' });
+    await form.submit.click();
+    await expect(form.success).toContainText(firstProduct);
+
+    await form.placeAnother.click();
+    await expect(form.product).toHaveValue('');
+    await expect(form.quantity).toHaveValue('1');
+    await expect(form.unitPrice).toHaveValue('');
+
+    await form.fill({ product: secondProduct, quantity: 3, unitPrice: '12.50' });
+    await form.submit.click();
+    await expect(form.success).toContainText(secondProduct);
+    await expect(form.success).toContainText('Total $37.50');
+
+    const products = (await customer.orders.list()).map((order) => order.product).sort();
+    expect(products).toEqual([firstProduct, secondProduct].sort());
+  });
 });

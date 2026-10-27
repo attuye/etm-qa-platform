@@ -14,6 +14,7 @@ export class NewOrderPage {
   readonly submit: Locator;
   readonly error: Locator;
   readonly success: Locator;
+  readonly placeAnother: Locator;
 
   constructor(private readonly page: Page) {
     const main = page.getByRole('main');
@@ -25,6 +26,7 @@ export class NewOrderPage {
     this.error = main.getByRole('alert');
     // this.success = main.getByRole('status');
     this.success = main.getByRole('status').filter({ hasText: 'ordered.' });
+    this.placeAnother = main.getByRole('button', { name: 'Place another order' });
   }
 
   async goto(): Promise<void> {
