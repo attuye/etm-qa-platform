@@ -1,0 +1,27 @@
+name: Start platform
+description: Install dependencies, build everything, and start the API against the job's Postgres service.
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .nvmrc
+        cache: npm
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci
+
+    - name: Build packages and apps
+      shell: bash
+      run: npm run build
+
+    - name: Start the API
+      shell: bash
+      run: npm run start -w @etm/api > api.log 2>&1 &
+
+    - name: Wait for the API
+      shell: bash
+      run: bash tools/ci/wait-for.sh http://localhost:3001/api/health API api.log
