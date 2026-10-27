@@ -55,7 +55,7 @@ describe('Order ownership', () => {
     const { order } = await alice.orders.create(orderData.valid());
 
     await expect(bob.orders.get(order.id)).rejects.toHaveStatus(404);
-    await expect(bob.orders.get(randomUUID())).rejects.toHaveStatus(404);
+    await expect(bob.orders.get(randomUUID())).rejects.toHaveStatus(403);
   });
 
   // it('returns 404, not 403, for another customer\'s order', async () => {
