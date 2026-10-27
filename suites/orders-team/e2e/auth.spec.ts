@@ -110,8 +110,4 @@ test.describe('Role-based navigation', () => {
     await expect(orders.nav.getByRole('link', { name: 'Admin' })).toBeVisible();
     await expect(orders.nav.getByRole('link', { name: 'New order' })).toHaveCount(0);
   });
-
-  test('TEMPORARY: fails on the first attempt only', async ({}, testInfo) => {
-  expect(testInfo.retry).toBeGreaterThan(0);
-});
 });
