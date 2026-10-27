@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NO_COLOR: 1
+  NEXT_TELEMETRY_DISABLED: 1
+  PORT: 3001
+  DATABASE_URL: postgres://etm:etm_ci_password@localhost:5432/etm
+  DB_SYNC: 'true'
+  JWT_SECRET: ci-only-secret-not-used-anywhere-else
+  JWT_EXPIRES_IN_SECONDS: 3600
+  ADMIN_EMAIL: admin@example.com
+  ADMIN_PASSWORD: Admin123!Ci
+  TEST_ENV: ci
+  API_BASE_URL: http://localhost:3001/api
+  WEB_BASE_URL: http://localhost:3000
+
+jobs:
+  api-tests:
+    name: Build, typecheck and API tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: etm
+          POSTGRES_PASSWORD: etm_ci_password
+          POSTGRES_DB: etm
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U etm -d etm"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Start platform
+        uses: ./.github/actions/start-platform
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run API tests
+        run: npm run test:api -w @etm/orders-team -- --ci
+
+      - name: Upload API log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-tests-logs
+          path: api.log
+          retention-days: 7
+
+  e2e-tests:
+    name: E2E tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: etm
+          POSTGRES_PASSWORD: etm_ci_password
+          POSTGRES_DB: etm
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U etm -d etm"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Start platform
+        uses: ./.github/actions/start-platform
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Start the web app
+        run: npm run start -w @etm/web > web.log 2>&1 &
+
+      - name: Wait for the web app
+        run: bash tools/ci/wait-for.sh http://localhost:3000/login "Web app" web.log
+
+      - name: Run E2E tests
+        run: npm run test:e2e -w @etm/orders-team
+
+      - name: Summarise E2E results
+        if: ${{ !cancelled() }}
+        run: node tools/ci/playwright-summary.mjs suites/orders-team/reports/e2e-results.json
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            suites/orders-team/playwright-report
+            suites/orders-team/test-results
+          retention-days: 7
+
+      - name: Upload server logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-server-logs
+          path: |
+            api.log
+            web.log
+          retention-days: 7
