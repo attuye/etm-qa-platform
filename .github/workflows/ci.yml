@@ -61,6 +61,12 @@ jobs:
       - name: Run API tests
         run: npm run test:api -w @etm/orders-team -- --ci
 
+      - name: Install k6
+        uses: grafana/setup-k6-action@v1
+
+      - name: k6 smoke test
+        run: k6 run -e PROFILE=smoke suites/orders-team/perf/orders-load.js
+
       - name: Upload API log
         if: failure()
         uses: actions/upload-artifact@v4
