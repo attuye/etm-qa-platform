@@ -9,7 +9,7 @@
 - Output: <N> ideas. Kept 2, <N> already covered, <N> low priority, 1 known finding.
 - New gaps chosen: "Place another order" reset; 3-decimal price rounding.
 
-### Draftings
+### Drafting
 - Prompt: one test for "Place another order", with our framework rules; no file edits.
 - Accepted: flow, fixtures, page object use, unique products, non-default first quantity (2)
   so the reset check is meaningful, success checks naming each product.
