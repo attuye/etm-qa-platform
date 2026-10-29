@@ -1,0 +1,32 @@
+appId: com.etm.partnershop
+name: A double tap on Place order creates one order
+tags:
+  - orders
+---
+- runFlow: ../subflows/register-customer.yaml
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../subflows/log-in.yaml
+    env:
+      EMAIL: ${output.customer.email}
+      PASSWORD: ${output.customer.password}
+- tapOn:
+    id: "new-order-button"
+- tapOn:
+    id: "product-input"
+- inputText: "Double tap lamp"
+- tapOn:
+    id: "unit-price-input"
+- inputText: "5"
+- hideKeyboard
+- doubleTapOn:
+    id: "place-order-button"
+- assertVisible:
+    id: "order-success"
+- runScript:
+    file: ../scripts/verify-orders.js
+    env:
+      EMAIL: ${output.customer.email}
+      PASSWORD: ${output.customer.password}
+      EXPECTED_COUNT: "1"

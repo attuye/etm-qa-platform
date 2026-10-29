@@ -8,7 +8,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test:perf": "k6 run perf/orders-load.js"
+    "test:perf": "k6 run perf/orders-load.js",
+    "test:mobile": "node -e \"require('fs').mkdirSync('reports', { recursive: true })\" && maestro test -e API_URL=http://localhost:3001/api --format junit --output reports/maestro-junit.xml mobile"
   },
   "devDependencies": {
     "@etm/qa-api-client": "^0.1.0",
