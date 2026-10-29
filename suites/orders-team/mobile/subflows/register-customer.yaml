@@ -1,0 +1,3 @@
+appId: com.etm.partnershop
+---
+- runScript: ../scripts/register-customer.js

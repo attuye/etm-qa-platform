@@ -1,0 +1,45 @@
+appId: com.etm.partnershop
+name: Customer places an order and sees it in the list
+tags:
+  - smoke
+  - orders
+---
+- runFlow: ../subflows/register-customer.yaml
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../subflows/log-in.yaml
+    env:
+      EMAIL: ${output.customer.email}
+      PASSWORD: ${output.customer.password}
+- assertVisible: "My orders"
+- assertVisible:
+    id: "orders-empty"
+- tapOn:
+    id: "new-order-button"
+- tapOn:
+    id: "product-input"
+- inputText: "Mobile desk lamp"
+- tapOn:
+    id: "quantity-input"
+- eraseText
+- inputText: "2"
+- tapOn:
+    id: "unit-price-input"
+- inputText: "19.99"
+- hideKeyboard
+- tapOn:
+    id: "place-order-button"
+- assertVisible:
+    id: "order-success"
+- assertVisible: '.*Total \$39\.98.*'
+- tapOn:
+    id: "view-orders-button"
+- assertVisible: "Mobile desk lamp"
+- runScript:
+    file: ../scripts/verify-orders.js
+    env:
+      EMAIL: ${output.customer.email}
+      PASSWORD: ${output.customer.password}
+      EXPECTED_COUNT: "1"
+      PRODUCT: "Mobile desk lamp"
