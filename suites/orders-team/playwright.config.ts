@@ -1,5 +1,8 @@
+import path from 'node:path';
 import { defineConfig, devices, type ReporterDescription } from '@playwright/test';
 import { loadConfig } from '@etm/qa-config';
+
+process.env.QA_ENV_FILE ??= path.join(__dirname, '.env');
 
 const config = loadConfig();
 const isCI = Boolean(process.env.CI);

@@ -15,7 +15,7 @@ export function loadConfig(options: LoadConfigOptions = {}): QaConfig {
     return cachedConfig;
   }
 
-  const envFile = options.envFile ?? path.resolve(process.cwd(), '.env');
+    const envFile = options.envFile ?? process.env.QA_ENV_FILE ?? path.resolve(process.cwd(), '.env');
   dotenv.config({ path: envFile, quiet: true });
 
   const result = qaConfigSchema.safeParse(process.env);
