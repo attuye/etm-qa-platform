@@ -1,3 +1,5 @@
+const path = require('node:path');
+process.env.QA_ENV_FILE ??= path.join(__dirname, '.env');
 module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/test'],
