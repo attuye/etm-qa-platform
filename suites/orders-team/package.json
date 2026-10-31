@@ -16,6 +16,7 @@
     "@etm/qa-config": "^0.1.0",
     "@etm/qa-data": "^0.1.0",
     "@etm/qa-playwright": "^0.1.0",
+    "@google-cloud/pubsub": "^6.3.2",
     "@jest/globals": "^30.5.2",
     "@playwright/test": "^1.64.1",
     "@swc/core": "^1.16.20",

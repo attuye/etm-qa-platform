@@ -11,6 +11,7 @@ import { Role } from '../users/role.enum';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderStatus } from './order-status.enum';
 import { Order } from './order.entity';
+import { OrderEventsPublisher } from '../events/order-events.publisher';
 
 const ALLOWED_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   [OrderStatus.Pending]: [OrderStatus.Confirmed, OrderStatus.Cancelled],
@@ -23,7 +24,8 @@ const POSTGRES_UNIQUE_VIOLATION = '23505';
 
 @Injectable()
 export class OrdersService {
-  constructor(@InjectRepository(Order) private readonly orders: Repository<Order>) {}
+  constructor(@InjectRepository(Order) private readonly orders: Repository<Order>,
+    private readonly orderEvents: OrderEventsPublisher,) { }
 
   async create(
     customerId: string,
@@ -45,8 +47,9 @@ export class OrdersService {
       totalCents: dto.quantity * dto.unitPriceCents,
     });
 
+    let saved: Order;
     try {
-      return { order: await this.orders.save(order), replayed: false };
+      saved = await this.orders.save(order);
     } catch (error) {
       if (!this.isUniqueViolation(error)) {
         throw error;
@@ -55,6 +58,9 @@ export class OrdersService {
       this.assertSamePayload(winner, dto);
       return { order: winner, replayed: true };
     }
+
+    await this.orderEvents.orderCreated(saved);
+    return { order: saved, replayed: false };
   }
 
   findAllFor(user: JwtPayload): Promise<Order[]> {
