@@ -6,7 +6,8 @@
     "build": "nest build",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:unit": "jest"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^6.3.2",
@@ -27,7 +28,11 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@jest/globals": "^30.5.2",
     "@nestjs/cli": "^12.0.8",
-    "@types/express": "^5.0.6"
+    "@swc/core": "^1.16.21",
+    "@swc/jest": "^0.2.39",
+    "@types/express": "^5.0.6",
+    "jest": "^30.5.2"
   }
 }

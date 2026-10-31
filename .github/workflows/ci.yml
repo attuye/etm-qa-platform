@@ -39,7 +39,7 @@ jobs:
       PUBSUB_EMULATOR_HOST: localhost:8085
       METADATA_SERVER_DETECTION: none
       EVENTS_ENABLED: 'true'
-      
+
     services:
       postgres:
         image: postgres:17
@@ -71,6 +71,9 @@ jobs:
 
       - name: Typecheck
         run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test:unit -w @etm/api -- --ci
 
       - name: Run API tests
         run: npm run test:api -w @etm/orders-team -- --ci
