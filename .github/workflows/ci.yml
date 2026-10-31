@@ -33,6 +33,13 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
 
+    env:
+      PUBSUB_ENABLED: 'true'
+      PUBSUB_PROJECT_ID: etm-local
+      PUBSUB_EMULATOR_HOST: localhost:8085
+      METADATA_SERVER_DETECTION: none
+      EVENTS_ENABLED: 'true'
+      
     services:
       postgres:
         image: postgres:17
@@ -51,7 +58,14 @@ jobs:
     steps:
       - name: Check out the code
         uses: actions/checkout@v4
-
+      
+      - name: Start Pub/Sub emulator
+        run: |
+          docker run -d --name pubsub -p 8085:8085 \
+            gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators \
+            gcloud beta emulators pubsub start --host-port=0.0.0.0:8085 --project=etm-local
+          timeout 90 bash -c 'until curl -sf http://localhost:8085 > /dev/null; do sleep 2; done'
+          echo "Pub/Sub emulator is ready"
       - name: Start platform
         uses: ./.github/actions/start-platform
 
@@ -74,6 +88,9 @@ jobs:
           name: api-tests-logs
           path: api.log
           retention-days: 7
+      - name: Pub/Sub emulator log
+        if: failure()
+        run: docker logs pubsub
 
   e2e-tests:
     name: E2E tests
