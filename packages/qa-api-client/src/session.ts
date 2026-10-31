@@ -3,10 +3,13 @@ import { OrdersClient } from './clients/orders.client';
 import { UsersClient } from './clients/users.client';
 import { HttpClient } from './http';
 import { Credentials } from './schemas';
+import { EventFailuresClient, NotificationsClient } from './clients/notifications.client';
 
 export class Session {
   readonly users: UsersClient;
   readonly orders: OrdersClient;
+  readonly notifications: NotificationsClient;
+  readonly eventFailures: EventFailuresClient;
 
   private token?: string;
   private pendingLogin?: Promise<string>;
@@ -19,6 +22,8 @@ export class Session {
     const getToken = (): Promise<string> => this.getToken();
     this.users = new UsersClient(http, getToken);
     this.orders = new OrdersClient(http, getToken);
+    this.notifications = new NotificationsClient(http, getToken);
+    this.eventFailures = new EventFailuresClient(http, getToken);
   }
 
   get email(): string {
